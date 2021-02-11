@@ -82,6 +82,12 @@ class AIState(State):
         else:
             self.snake.popBody()
 
+    def resetReward(self):
+        """
+        Resets the reward to 0
+        """
+        self.reward = 0
+
     def reset(self):
         """
         Resets the game state

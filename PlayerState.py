@@ -73,6 +73,12 @@ class PlayerState(State):
         """
         return self.gameOver, self.score
 
+    def resetReward(self):
+        """
+        Does nothing, only for the AI State
+        """
+        pass
+
     def reset(self):
         """
         Resets the game state

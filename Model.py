@@ -102,7 +102,7 @@ class QTrainer():
             if not done[index]:
                 QNew = reward[index] + self.gamma * torch.max(self.model(nextState[index]))
 
-            target[index][torch.argmax(finalAction).item()] = QNew
+            target[index][torch.argmax(finalAction[index]).item()] = QNew
 
         # Q-New = Reward + Gamma * max(Next Predicted Q-Value
         # pred.clone()

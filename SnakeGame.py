@@ -75,6 +75,7 @@ class SnakeGame:
         """
         # Increment frame iteration
         self.state.frameIteration += 1
+        self.state.resetReward()
 
         # If ai controlled no user input hence just passes
         self.state.setDirection()
