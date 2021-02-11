@@ -7,7 +7,7 @@
 """
 
 import matplotlib.pyplot as plt
-from IPython import display
+import os
 
 class Plot():
     """
@@ -19,7 +19,7 @@ class Plot():
         """
         Creates an instance of Plot and set it up
         """
-        plt.ion()
+        pass
 
     def plot(self, scores, meanScores):
         """
@@ -27,14 +27,19 @@ class Plot():
         :param scores: The scores
         :param meanScore: The mean scores
         """
-        display.clear_output(wait=True)
-        display.display(plt.gcf())
-        plt.clf()
         plt.title('Training...')
         plt.xlabel('Number of Games')
         plt.ylabel('Score')
-        plt.plot(scores)
-        plt.plot(meanScores)
         plt.ylim(ymin=0)
         plt.text(len(scores)-1, scores[-1], str(scores[-1]))
         plt.text(len(meanScores)-1, meanScores[-1], str(meanScores[-1]))
+        plt.plot(scores)
+        plt.plot(meanScores)
+        
+        plotFolderPath = './plots'
+
+        if not os.path.exists(plotFolderPath):
+            os.makedirs(plotFolderPath)
+
+        filename = os.path.join(plotFolderPath, 'plot.png')
+        plt.savefig(filename)
