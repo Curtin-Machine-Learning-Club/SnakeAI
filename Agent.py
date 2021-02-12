@@ -9,6 +9,8 @@
 import torch
 import random
 import numpy as np
+import sys
+import os
 from collections import deque
 from SnakeGame import SnakeGame, Point
 from Direction import Direction
@@ -142,12 +144,34 @@ class Agent:
             action = random.randint(0, 2)
             finalAction[action] = 1
         else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            action = torch.argmax(prediction).item()
-            finalAction[action] = 1
+            finalAction = self.getTrainedAction(state)
 
         return finalAction
+
+    def getTrainedAction(self, state):
+        """
+        Determins the action for the agent to perform (Only uses trained actions) 
+        :param state: The current state of the game
+        """
+
+        finalAction = [0, 0, 0]
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.model(state0)
+        action = torch.argmax(prediction).item()
+        finalAction[action] = 1
+        
+        return finalAction
+
+    def loadModel(self, filename='model.pth'):
+        """
+        Loads a model from a file
+        :param filename: The filename of the model file
+        """
+        modelFolderPath = './model'
+        filename = os.path.join(modelFolderPath, filename)
+
+        self.model.load_state_dict(torch.load(filename))
+        self.model.eval()
 
 
 def train():
@@ -200,7 +224,37 @@ def train():
             plotMeanScores.append(meanScore)
             plot.plot(plotScores, plotMeanScores)
 
+def run():
+    """
+    Runs the model without training it
+    """
+    
+    highestScore = 0
+    agent = Agent()
+    agent.loadModel()
+    game = SnakeGame(ai=True)
+    done = False    
+
+    while not done:
+        stateOld = agent.getState(game)
+
+        finalAction = agent.getTrainedAction(stateOld)
+
+        reward, done, score = game.playStep(finalAction)
+        stateNew = agent.getState(game)
+    
+    print("Score was:", score)
 
 
 if __name__ == "__main__":
-    train()
+    usage = "Invalid Usage: python3 Agent.py <run/train>"
+
+    if len(sys.argv) != 2:
+        print(usage)
+    else:
+        if sys.argv[1] == "run":
+            run()
+        elif sys.argv[1] == "train":
+            train()
+        else:
+            print(usage)
